@@ -1,0 +1,413 @@
+import React, { useState, useEffect } from 'react';
+import { Mail, Phone, MapPin, ChevronRight, Menu, X, ArrowRight } from 'lucide-react';
+
+// Mock Data - In a real app, this would come from a CMS or API
+const blogPosts = [
+  { id: 1, title: 'The Mindset Shift That Unlocks True Wealth', category: 'Mindset', date: 'June 15, 2025', imageUrl: 'https://placehold.co/600x400/1a202c/ffffff?text=Mindset', excerpt: 'Discover the foundational mental models that separate the top 1% of earners from everyone else.' },
+  { id: 2, title: 'Investing 101: From Zero to Confident', category: 'Strategy', date: 'June 10, 2025', imageUrl: 'https://placehold.co/600x400/2d3748/ffffff?text=Strategy', excerpt: 'A step-by-step guide to building a powerful investment portfolio, even if you\'re starting with nothing.' },
+  { id: 3, title: 'The Art of the Side Hustle: Scaling Your Income', category: 'Action', date: 'June 5, 2025', imageUrl: 'https://placehold.co/600x400/4a5568/ffffff?text=Action', excerpt: 'Learn how to identify, launch, and scale a profitable side business without quitting your day job.' },
+  { id: 4, title: 'Networking for Net Worth: Build Your Circle', category: 'Growth', date: 'May 30, 2025', imageUrl: 'https://placehold.co/600x400/718096/ffffff?text=Growth', excerpt: 'Your network is your net worth. Here are actionable strategies to connect with high-value individuals.' },
+];
+
+const programs = [
+    { id: 1, title: 'The Earner\'s Mindset', description: 'A 30-day program to rewire your financial blueprint for success.', price: '$497', duration: '4 Weeks', format: 'Video Modules, Live Q&A' },
+    { id: 2, title: 'Wealth Accelerator Coaching', description: 'Personalized 1-on-1 coaching to fast-track your financial goals.', price: 'By Application', duration: '3 Months', format: 'Weekly 1-on-1 Calls' },
+    { id: 3, title: 'Passive Income Playbook', description: 'The complete guide to building automated income streams.', price: '$997', duration: '8 Weeks', format: 'Video Course, Community Access' },
+];
+
+const testimonials = [
+    { name: 'John D.', quote: '"The principles I learned from Lifelong Earner fundamentally changed my approach to money. I\'ve doubled my income in just 6 months!"', imageUrl: 'https://placehold.co/100x100/e2e8f0/4a5568?text=JD' },
+    { name: 'Sarah L.', quote: '"This isn\'t just financial advice; it\'s a total life transformation. I finally feel in control of my future."', imageUrl: 'https://placehold.co/100x100/e2e8f0/4a5568?text=SL' },
+    { name: 'Mike R.', quote: '"I was skeptical at first, but the results speak for themselves. The best investment I\'ve ever made in myself."', imageUrl: 'https://placehold.co/100x100/e2e8f0/4a5568?text=MR' }
+];
+
+// Reusable Components
+const NavLink = ({ page, setPage, children, isMobile, closeMenu }) => (
+    <button onClick={() => { setPage(page); if (isMobile && closeMenu) closeMenu(); }} className="text-gray-300 hover:text-white transition-colors duration-300 font-medium px-3 py-2 rounded-md text-sm uppercase tracking-wider">
+        {children}
+    </button>
+);
+
+const CTAButton = ({ children, className = '' }) => (
+    <button className={`bg-amber-500 text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg ${className}`}>
+        {children}
+    </button>
+);
+
+// Page Components
+const HomePage = ({ setPage }) => (
+    <div className="animate-fadeIn">
+        {/* Hero Section */}
+        <section className="relative bg-gray-900 text-white min-h-screen flex items-center justify-center text-center overflow-hidden">
+            <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
+            <video autoPlay loop muted playsInline className="absolute z-0 w-auto min-w-full min-h-full max-w-none">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-30482-large.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+            <div className="relative z-20 container mx-auto px-4">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 leading-tight tracking-tighter">
+                    Unlock Your <span className="text-amber-400">Lifelong</span> Earning Potential
+                </h1>
+                <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-gray-300">
+                    Stop trading time for money. Start building a life of financial freedom, purpose, and lasting wealth.
+                </p>
+                <CTAButton>Book a Free Strategy Call</CTAButton>
+            </div>
+        </section>
+
+        {/* Social Proof */}
+        <section className="bg-gray-800 py-12">
+            <div className="container mx-auto text-center">
+                <h3 className="text-sm text-gray-400 uppercase tracking-widest mb-6">As Featured In</h3>
+                <div className="flex justify-center items-center space-x-8 md:space-x-12 grayscale opacity-60">
+                    <span className="font-bold text-2xl text-white">FORBES</span>
+                    <span className="font-bold text-2xl text-white">ENTREPRENEUR</span>
+                    <span className="font-bold text-2xl text-white">INC.</span>
+                    <span className="font-bold text-2xl text-white">BUSINESS INSIDER</span>
+                </div>
+            </div>
+        </section>
+
+        {/* Core Pillars Section */}
+        <section className="py-20 bg-gray-900 text-white">
+            <div className="container mx-auto px-4 text-center">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">The Four Pillars of Lifelong Earning</h2>
+                <p className="max-w-2xl mx-auto text-gray-400 mb-12">Our entire philosophy is built on these foundational principles for sustainable success.</p>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {['Mindset', 'Strategy', 'Action', 'Growth'].map((pillar) => (
+                        <div key={pillar} className="bg-gray-800 p-8 rounded-lg border border-gray-700 hover:border-amber-500 transition-all duration-300 transform hover:-translate-y-2">
+                            <h3 className="text-2xl font-bold text-amber-400 mb-4">{pillar}</h3>
+                            <p className="text-gray-400">Master the internal game of wealth and develop the unshakable belief required for success.</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+        
+        {/* Featured Video */}
+        <section className="py-20 bg-gray-800">
+            <div className="container mx-auto px-4">
+                <div className="flex flex-col lg:flex-row items-center gap-12">
+                    <div className="lg:w-1/2">
+                         <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-2xl">
+                            <iframe src="https://www.youtube.com/embed/kpF5N6JkiHU" title="Featured Video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-full"></iframe>
+                        </div>
+                    </div>
+                    <div className="lg:w-1/2 text-white">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">See the Philosophy in Action</h2>
+                        <p className="text-gray-400 mb-6">Words are one thing, but seeing the principles live is another. Watch this core lesson from our YouTube channel to get a taste of what's possible when you apply the Lifelong Earner system.</p>
+                        <button onClick={() => window.open('https://www.youtube.com/watch?v=kpF5N6JkiHU', '_blank')} className="flex items-center text-amber-400 font-semibold hover:text-amber-300 transition-colors">
+                            Watch More on YouTube <ArrowRight className="ml-2 h-5 w-5" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        {/* Testimonials */}
+        <section className="py-20 bg-gray-900 text-white">
+            <div className="container mx-auto px-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">What Our Clients Achieve</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {testimonials.map((testimonial, index) => (
+                        <div key={index} className="bg-gray-800 p-8 rounded-lg border border-gray-700 flex flex-col items-start">
+                            <img src={testimonial.imageUrl} alt={testimonial.name} className="w-20 h-20 rounded-full mb-4 border-2 border-amber-400" />
+                            <p className="text-gray-300 mb-4 italic flex-grow">"{testimonial.quote}"</p>
+                            <h4 className="font-bold text-amber-400 text-lg">{testimonial.name}</h4>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="bg-amber-500 text-gray-900 py-20">
+            <div className="container mx-auto text-center px-4">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Ready to Write Your Own Success Story?</h2>
+                <p className="max-w-2xl mx-auto mb-8 text-gray-800">
+                    Your journey to financial freedom starts with a single step. Let's explore how we can build your legacy, together.
+                </p>
+                <CTAButton className="bg-gray-900 text-white hover:bg-gray-800">Start Your Journey Now</CTAButton>
+            </div>
+        </section>
+    </div>
+);
+
+const AboutPage = () => (
+    <div className="bg-gray-900 text-white py-20 animate-fadeIn">
+        <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-center mb-12">The <span className="text-amber-400">Lifelong Earner</span> Mission</h1>
+            
+            <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <h2 className="text-3xl font-bold text-amber-400 mb-4">From Scarcity to Abundance</h2>
+                    <p className="text-gray-300 mb-4 leading-relaxed">Lifelong Earner was born from a simple, powerful realization: most financial advice is broken. It’s either too complex, too risky, or too focused on short-term gains. We saw a world of talented, hard-working people trapped in a cycle of living paycheck-to-paycheck, never truly building the wealth they deserved.</p>
+                    <p className="text-gray-300 leading-relaxed">Our mission is to shatter that paradigm. We provide a clear, actionable roadmap to not just make money, but to become a Lifelong Earner—someone who has mastered the skills, mindset, and strategies to generate wealth consistently and ethically, for the rest of their life.</p>
+                </div>
+                <div className="rounded-lg overflow-hidden shadow-2xl">
+                     <img src="https://placehold.co/800x600/1a202c/amber?text=Our+Vision" alt="Our Vision" className="w-full h-full object-cover"/>
+                </div>
+            </div>
+
+            <div className="text-center mb-20">
+                 <h2 className="text-3xl md:text-4xl font-bold mb-4">Meet the Founder</h2>
+                 <p className="max-w-3xl mx-auto text-gray-400 mb-8">The driving force behind the Lifelong Earner movement.</p>
+                 <div className="inline-block text-left bg-gray-800 p-8 rounded-lg border border-gray-700">
+                     <div className="flex flex-col sm:flex-row items-center gap-8">
+                        <img src="https://placehold.co/150x150/e2e8f0/4a5568?text=Founder" alt="Founder" className="w-32 h-32 rounded-full border-4 border-amber-400" />
+                        <div>
+                            <h3 className="text-2xl font-bold text-white">Alex "The Earner" Chen</h3>
+                            <p className="text-amber-400 font-semibold mb-2">Founder & Chief Strategist</p>
+                            <p className="text-gray-400 max-w-md">After a decade in high-stakes finance and building multiple successful ventures, Alex realized the principles of wealth were universal but poorly taught. He created Lifelong Earner to democratize financial mastery for ambitious individuals everywhere.</p>
+                        </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+);
+
+const ProgramsPage = ({ setPage }) => (
+    <div className="bg-gray-900 text-white py-20 animate-fadeIn">
+        <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-center mb-4">Our Programs</h1>
+            <p className="text-xl text-center text-gray-400 max-w-3xl mx-auto mb-12">Proven systems to accelerate your journey to financial freedom. Choose the path that's right for you.</p>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {programs.map(program => (
+                    <div key={program.id} className="bg-gray-800 rounded-lg p-8 flex flex-col border border-gray-700 hover:border-amber-500 transition-all duration-300 shadow-lg">
+                        <h2 className="text-2xl font-bold text-amber-400 mb-3">{program.title}</h2>
+                        <p className="text-gray-400 mb-6 flex-grow">{program.description}</p>
+                        <div className="text-sm text-gray-300 mb-6 space-y-2">
+                           <p><span className="font-semibold text-white">Duration:</span> {program.duration}</p>
+                           <p><span className="font-semibold text-white">Format:</span> {program.format}</p>
+                        </div>
+                        <div className="mt-auto">
+                           <p className="text-3xl font-bold mb-4">{program.price}</p>
+                           <CTAButton className="w-full">Enroll Now</CTAButton>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
+
+const BlogPage = () => (
+    <div className="bg-gray-900 text-white py-20 animate-fadeIn">
+        <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-center mb-4">The Knowledge Hub</h1>
+            <p className="text-xl text-center text-gray-400 max-w-3xl mx-auto mb-12">Actionable insights and strategies to fuel your growth as a Lifelong Earner.</p>
+            
+            {/* Filter/Search */}
+            <div className="flex justify-center mb-12">
+                 <div className="bg-gray-800 p-2 rounded-full border border-gray-700">
+                    <button className="px-4 py-2 rounded-full bg-amber-500 text-gray-900 font-semibold">All</button>
+                    <button className="px-4 py-2 rounded-full text-gray-300 hover:bg-gray-700">Mindset</button>
+                    <button className="px-4 py-2 rounded-full text-gray-300 hover:bg-gray-700">Strategy</button>
+                    <button className="px-4 py-2 rounded-full text-gray-300 hover:bg-gray-700">Action</button>
+                 </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {blogPosts.map(post => (
+                    <div key={post.id} className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-amber-500 transition-all duration-300 transform hover:-translate-y-1 group">
+                        <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" />
+                        <div className="p-6">
+                            <p className="text-sm text-amber-400 mb-2">{post.category} &bull; {post.date}</p>
+                            <h2 className="text-xl font-bold mb-3 group-hover:text-amber-400 transition-colors">{post.title}</h2>
+                            <p className="text-gray-400 mb-4">{post.excerpt}</p>
+                            <button className="font-semibold text-white flex items-center group-hover:text-amber-400">
+                                Read More <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
+const ContactPage = () => (
+    <div className="bg-gray-900 text-white py-20 animate-fadeIn">
+        <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-center mb-4">Get In Touch</h1>
+            <p className="text-xl text-center text-gray-400 max-w-3xl mx-auto mb-12">Have a question, a partnership idea, or just want to connect? We'd love to hear from you.</p>
+
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 bg-gray-800 p-8 md:p-12 rounded-lg border border-gray-700">
+                <div>
+                    <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+                    <div className="space-y-4">
+                        <div className="flex items-center">
+                            <Mail className="h-6 w-6 text-amber-400 mr-4"/>
+                            <span className="text-gray-300">contact@lifelongearner.com</span>
+                        </div>
+                         <div className="flex items-center">
+                            <Phone className="h-6 w-6 text-amber-400 mr-4"/>
+                            <span className="text-gray-300">+1 (800) 555-EARN</span>
+                        </div>
+                         <div className="flex items-start">
+                            <MapPin className="h-6 w-6 text-amber-400 mr-4 mt-1"/>
+                            <span className="text-gray-300">123 Freedom Lane,<br/>Suite 100, Prosper City, USA</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
+                    <form className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="sr-only">Name</label>
+                            <input type="text" id="name" placeholder="Your Name" className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                        </div>
+                         <div>
+                            <label htmlFor="email" className="sr-only">Email</label>
+                            <input type="email" id="email" placeholder="Your Email" className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                        </div>
+                         <div>
+                            <label htmlFor="message" className="sr-only">Message</label>
+                            <textarea id="message" rows="5" placeholder="Your Message" className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                        </div>
+                        <div>
+                            <CTAButton className="w-full">Send Message</CTAButton>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+// Main App Component
+const App = () => {
+    const [page, setPage] = useState('home');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Add useEffect to set page title
+    useEffect(() => {
+        const pageTitles = {
+            home: 'Home | Lifelong Earner',
+            about: 'About Us | Lifelong Earner',
+            programs: 'Programs | Lifelong Earner',
+            blog: 'Blog | Lifelong Earner',
+            contact: 'Contact Us | Lifelong Earner',
+        };
+        document.title = pageTitles[page] || 'Lifelong Earner';
+    }, [page]);
+
+    const renderPage = () => {
+        switch (page) {
+            case 'home':
+                return <HomePage setPage={setPage} />;
+            case 'about':
+                // return <AboutPage setPage={setPage} />; // Original had setPage, but AboutPage component doesn't accept it.
+                return <AboutPage />;
+            case 'programs':
+                return <ProgramsPage setPage={setPage} />;
+            case 'blog':
+                // return <BlogPage setPage={setPage} />; // Original had setPage, but BlogPage component doesn't accept it.
+                return <BlogPage />;
+            case 'contact':
+                // return <ContactPage setPage={setPage} />; // Original had setPage, but ContactPage component doesn't accept it.
+                return <ContactPage />;
+            default:
+                return <HomePage setPage={setPage} />;
+        }
+    };
+
+    return (
+        <div className="bg-gray-900 font-sans">
+            {/* Header */}
+            <header className="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center justify-between h-20">
+                        {/* Logo */}
+                        <div className="text-2xl font-bold text-white cursor-pointer" onClick={() => setPage('home')}>
+                            LIFELONG<span className="text-amber-400">EARNER</span>
+                        </div>
+
+                        {/* Desktop Nav */}
+                        <nav className="hidden md:flex items-center space-x-2">
+                            <NavLink page="home" setPage={setPage}>Home</NavLink>
+                            <NavLink page="about" setPage={setPage}>About</NavLink>
+                            <NavLink page="programs" setPage={setPage}>Programs</NavLink>
+                            <NavLink page="blog" setPage={setPage}>Blog</NavLink>
+                            <NavLink page="contact" setPage={setPage}>Contact</NavLink>
+                            <button className="ml-4 bg-amber-500 text-gray-900 font-bold py-2 px-5 rounded-full hover:bg-amber-400 transition-all duration-300 text-sm">
+                                Free Call
+                            </button>
+                        </nav>
+
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden">
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+                                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Menu */}
+                {isMenuOpen && (
+                    <div className="md:hidden bg-gray-800">
+                        <nav className="flex flex-col items-center space-y-4 py-4">
+                             <NavLink page="home" setPage={setPage} isMobile closeMenu={() => setIsMenuOpen(false)}>Home</NavLink>
+                             <NavLink page="about" setPage={setPage} isMobile closeMenu={() => setIsMenuOpen(false)}>About</NavLink>
+                             <NavLink page="programs" setPage={setPage} isMobile closeMenu={() => setIsMenuOpen(false)}>Programs</NavLink>
+                             <NavLink page="blog" setPage={setPage} isMobile closeMenu={() => setIsMenuOpen(false)}>Blog</NavLink>
+                             <NavLink page="contact" setPage={setPage} isMobile closeMenu={() => setIsMenuOpen(false)}>Contact</NavLink>
+                             <button className="mt-4 bg-amber-500 text-gray-900 font-bold py-2 px-5 rounded-full hover:bg-amber-400 transition-all duration-300">
+                                Book Free Call
+                            </button>
+                        </nav>
+                    </div>
+                )}
+            </header>
+
+            <main>{renderPage()}</main>
+
+            {/* Footer */}
+            <footer className="bg-gray-900 border-t border-gray-800 text-gray-400">
+                <div className="container mx-auto py-12 px-4">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                        <div>
+                             <h3 className="text-lg font-bold text-white mb-4">LIFELONG<span className="text-amber-400">EARNER</span></h3>
+                             <p>Master the art and science of building lasting wealth.</p>
+                        </div>
+                        <div>
+                             <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
+                             <ul>
+                                 <li className="mb-2"><a href="#" onClick={(e) => {e.preventDefault(); setPage('about')}} className="hover:text-amber-400">About Us</a></li>
+                                 <li className="mb-2"><a href="#" onClick={(e) => {e.preventDefault(); setPage('programs')}} className="hover:text-amber-400">Programs</a></li>
+                                 <li className="mb-2"><a href="#" onClick={(e) => {e.preventDefault(); setPage('blog')}} className="hover:text-amber-400">Blog</a></li>
+                                 <li className="mb-2"><a href="#" onClick={(e) => {e.preventDefault(); setPage('contact')}} className="hover:text-amber-400">Contact</a></li>
+                             </ul>
+                        </div>
+                        <div>
+                             <h3 className="text-lg font-bold text-white mb-4">Legal</h3>
+                             <ul>
+                                 <li className="mb-2"><a href="#" className="hover:text-amber-400">Privacy Policy</a></li>
+                                 <li className="mb-2"><a href="#" className="hover:text-amber-400">Terms of Service</a></li>
+                             </ul>
+                        </div>
+                        <div>
+                             <h3 className="text-lg font-bold text-white mb-4">Connect With Us</h3>
+                             <div className="flex space-x-4">
+                                <a href="https://x.com/Lifelong_Earner" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400">X</a>
+                                <a href="https://www.instagram.com/lifelong.earner/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400">Instagram</a>
+                                <a href="https://www.tiktok.com/@lifelongearner" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400">TikTok</a>
+                                <a href="https://www.youtube.com/watch?v=kpF5N6JkiHU" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400">YouTube</a>
+                             </div>
+                        </div>
+                    </div>
+                    <div className="border-t border-gray-800 pt-8 text-center text-sm">
+                        <p>&copy; {new Date().getFullYear()} Lifelong Earner. All Rights Reserved. Built for a life of abundance.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    );
+};
+
+export default App;
